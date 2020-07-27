@@ -69,7 +69,7 @@ def userMenu():
     return choice
 
 
-def run():
+def main():
     keepRunning = True
     while keepRunning:
         res = userMenu()
@@ -79,4 +79,6 @@ def run():
         if res=='2':
             keepRunning=False
 
-run()
+if __name__ == "__main__":
+    # execute only if run as a script
+    main()

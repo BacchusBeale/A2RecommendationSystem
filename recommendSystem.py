@@ -1,57 +1,8 @@
-import pandas as pd
-import nltk
-
-class Course:
-    def __init__(self):
-        self.courseName=""
-
-class ReadingMaterial:
-    def __init__(self,title,resourceType,isbn,issn,doi,
-    subtitle,editors,publisher,authors):
-        self.title=title
-        self.resourceType=resourceType
-        self.isbn=isbn
-        self.issn=issn
-        self.doi=doi
-        self.subtitle=subtitle
-        self.editors=editors
-        self.publisher=publisher
-        self.authors=authors
+# http://www.nltk.org/ 
+import dataModels
+import prepareData
 
 def buildSystem():
-    pass
-
-def prepareData():
-    pass
-
-def getExtraData():
-    pass
-
-def trainStatsModel():
-    pass
-
-def trainContentModel():
-    pass
-
-def trainCollaborativeModel():
-    pass
-
-def testStatsModel():
-    pass
-
-def testContentModel():
-    pass
-
-def testCollaborativeModel():
-    pass
-
-def predictStatsModel(numResults=5):
-    pass
-
-def predictContentModel(numResults=5):
-    pass
-
-def predictCollaborativeModel(numResults=5):
     pass
 
 def doUserSearch():
@@ -61,9 +12,9 @@ def doUserSearch():
 def userMenu():
     print('''
     Welcome to Recommendation System for University Reading Resources
-    1. Initilisation: Build and train system
-    2. User Queries: Search by keywords
-    0. Quit
+    1. User Queries: Search by keywords
+    2. Build system
+    any other input. Quit
     ''')
     choice = input("Enter menu option: ")
     return choice
@@ -77,6 +28,8 @@ def main():
             output = doUserSearch()
             print(output)
         if res=='2':
+            buildSystem()
+        else:
             keepRunning=False
 
 if __name__ == "__main__":

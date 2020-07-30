@@ -2,6 +2,7 @@
 #https://en.wikipedia.org/wiki/International_Standard_Book_Number
 #https://www.journaldev.com/32797/python-convert-numpy-array-to-list
 #https://stackoverflow.com/questions/22341271/get-list-from-pandas-dataframe-column
+#https://www.geeksforgeeks.org/removing-stop-words-nltk-python/
 
 from sklearn_pandas import DataFrameMapper, gen_features, CategoricalImputer
 import sklearn.preprocessing
@@ -10,6 +11,7 @@ import numpy as np
 from nltk import word_tokenize
 import string
 import re
+from nltk.corpus import stopwords
 
 class RSData:
     #COL NAMES
@@ -66,15 +68,25 @@ class RSData:
             w = w.strip() # remove whitespace
             for p in punct:
                 w.replace(p,"") # remove punctuation
-            noPunctuation.append(w)
+            
+            if len(w)>0: # no empty strings
+                noPunctuation.append(w)
         
         return words
         
+    def removeStopwords(self, wordList):
+        stoplist = set(stopwords.words('english'))
+        mainwords = []
+        for w in wordList:
+            if w not in stoplist:
+                mainwords.append(w)
+        return mainwords
 
     def makeVocabularyFile(self, dataList, filePath):
         fulltext = ' '.join(dataList)
         cleanWordList = self.cleanText2List(fulltext)
-        wordSet = set(cleanWordList)
+        usefulWords = self.removeStopwords(cleanWordList)
+        wordSet = set(usefulWords)
         wordSorted=sorted(wordSet)
         numWords = len(wordSorted)
         with open(filePath, 'w') as f:
@@ -94,6 +106,11 @@ def preprocessData(xlsfile='data/a2data.xlsx', debug=True):
     # input data: CourseName
     coursenameData = rs.getColumnDataAsList(RSData.COURSENAME)
     nWords = rs.makeVocabularyFile(dataList=coursenameData, filePath='data/courseVocab.txt')
+    print(f"Num words={nWords}")
+
+    # output data: CourseName
+    readingListData = rs.getColumnDataAsList(RSData.TITLE)
+    nWords = rs.makeVocabularyFile(dataList=readingListData, filePath='data/readingListVocab.txt')
     print(f"Num words={nWords}")
 
 

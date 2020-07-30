@@ -3,11 +3,14 @@
 #https://www.journaldev.com/32797/python-convert-numpy-array-to-list
 #https://stackoverflow.com/questions/22341271/get-list-from-pandas-dataframe-column
 #https://www.geeksforgeeks.org/removing-stop-words-nltk-python/
+#https://www.datacamp.com/community/tutorials/stemming-lemmatization-python
+
 
 from sklearn_pandas import DataFrameMapper, gen_features, CategoricalImputer
 import sklearn.preprocessing
 import pandas as pd
 import numpy as np
+import nltk
 from nltk import word_tokenize
 import string
 import re
@@ -55,10 +58,54 @@ class RSData:
     def dataSummary(self):
         return self.rsdata.info()
 
+from nltk.stem import PorterStemmer
+from nltk.stem import LancasterStemmer
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import wordnet
+
+# NLP methods
+class NLPTools:
     def toLowerCase(self,text):
         return str(text).lower()
 
+    def applyStemming(self,wordList, usePorter=True): # else use Lancaster
+        stems = []
+        stemmer = PorterStemmer()
+        if not usePorter:
+            stemmer = LancasterStemmer()
+
+        for w in wordList:
+            s = stemmer.stem(w)
+            stems.append(s)
+
+        return stems
+
+    def applyLemmatisation(self, wordList):
+        wordnet_lemmatizer = WordNetLemmatizer()
+        lemmaList=[]
+        for w in wordList:
+            postag = self.get_wordnet_pos(w)
+            lemma = wordnet_lemmatizer.lemmatize(w,pos=postag)
+            lemmaList.append(lemma)
+
+        return lemma
+
+    def getPartOfSpeech(self,singleWord):
+        postag = nltk.pos_tag(singleWord) # returns tuple (word,tag)
+        return postag
+
+    # Note: Adapted to convert POS tags
+    # https://www.machinelearningplus.com/nlp/lemmatization-examples-python/
+# https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html
+    def get_wordnet_pos(self,singleWord):
+    # """Map POS tag to first character lemmatize() accepts"""
+        word, postag = self.getPartOfSpeech(singleWord)
+        print(f"Wordnet POS: {word} -> {postag}")
+        wordnet_tag = postag[0] # first character
+        return wordnet_tag.lower()
+
 #https://machinelearningmastery.com/clean-text-machine-learning-python/
+
     def cleanText2List(self, textString):
         lowercase = textString.lower()
         words = re.split(r'\W+', lowercase)
@@ -97,20 +144,23 @@ class RSData:
 
 # main processing function
 def preprocessData(xlsfile='data/a2data.xlsx', debug=True):
+    nltk.download('wordnet')
     numRows = None
     if debug:
         numRows=100
 
+    nlp = NLPTools()
     rs = RSData()
     rs.loadXLSXData(datafile=xlsfile, numrows=numRows)
     # input data: CourseName
     coursenameData = rs.getColumnDataAsList(RSData.COURSENAME)
-    nWords = rs.makeVocabularyFile(dataList=coursenameData, filePath='data/courseVocab.txt')
+
+    nWords = nlp.makeVocabularyFile(dataList=coursenameData, filePath='data/courseVocab.txt')
     print(f"Num words={nWords}")
 
     # output data: CourseName
     readingListData = rs.getColumnDataAsList(RSData.TITLE)
-    nWords = rs.makeVocabularyFile(dataList=readingListData, filePath='data/readingListVocab.txt')
+    nWords = nlp.makeVocabularyFile(dataList=readingListData, filePath='data/readingListVocab.txt')
     print(f"Num words={nWords}")
 
 

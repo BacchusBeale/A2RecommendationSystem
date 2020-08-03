@@ -36,12 +36,18 @@ def test2():
             if len(t)>0:
                 termList.append(t)
 
-    for t in termList:
-        print(t)
+    # for t in termList:
+    #     print(t)
 
     nlp = nlptools.NLPTools()
     status = nlp.makeTFMatrix(termList=termList, documentList=coursenameData, saveAsCSV='courseTF.csv')
-    print(f"Status: {status}")
+    print(f"Status 1: {status}")
+
+    status = nlp.makeIDFMatrix(termList=termList, documentList=coursenameData, saveAsCSV='courseIDF.csv')
+    print(f"Status 2: {status}")
+
+    status = nlp.makeTFIDFScoreMatrix(termList=termList, documentList=coursenameData, saveAsCSV='courseTFIDF.csv')
+    print(f"Status 3: {status}")
 
 def runtests():
     #test1()

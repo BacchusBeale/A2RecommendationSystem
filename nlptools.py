@@ -123,6 +123,9 @@ class NLPTools:
         return frequency
 
     def inverseDocumentFrequency(self, docFrequency, numDocuments):
+        # prevent divide by zero or log(0) errors
+        if numDocuments==0 or docFrequency==0:
+            return 0
         idf = math.log2(numDocuments/docFrequency)
         return idf
 
@@ -158,9 +161,47 @@ class NLPTools:
         return True
         
 
-
     def makeIDFMatrix(self, termList, documentList, saveAsCSV='data/idf.csv'):
-        pass
+        try:
+            numTerms = len(termList)
+            numDocs=len(documentList)
+            # terms=rows, docs=cols
+            idfMatrix = np.zeros((numTerms,1)) # one value for each term
+            for t in range(numTerms):
+                nextTerm=termList[t]
+                docfreq = self.numberDocumentsWithTerm(nextTerm, documentList)
+                idfScore = self.inverseDocumentFrequency(docfreq, numDocs)
+                idfMatrix[t] = idfScore
 
-    def makeTFIDFScoreMatrix(self, tfCSVFile, idfCSVFile):
-        pass
+            np.savetxt(saveAsCSV, idfMatrix)
+        except BaseException as e:
+            print(str(e))
+            return False
+
+        return True
+
+    def makeTFIDFScoreMatrix(self, termList, documentList, saveAsCSV='data/tfidfScores.csv'):
+        try:
+            numTerms = len(termList)
+            numDocs=len(documentList)
+            # terms=rows, docs=cols
+            scoreMatrix = np.zeros((numTerms,numDocs)) # one value for each term
+            for t in range(numTerms):
+                nextTerm=termList[t]
+                docfreq = self.numberDocumentsWithTerm(nextTerm, documentList)
+                idfScore = self.inverseDocumentFrequency(docfreq, numDocs)
+                
+                for d in range(numDocs):
+                    term=termList[t]
+                    doc=documentList[d]
+                    tfValue = self.normalizedTermFrequency(term,doc)
+                    
+                    tfidfScore = tfValue*idfScore
+                    scoreMatrix[t,d]=tfidfScore
+
+            np.savetxt(saveAsCSV, scoreMatrix)
+        except BaseException as e:
+            print(str(e))
+            return False
+
+        return True

@@ -59,6 +59,7 @@ class NLPTools:
 
     def cleanText2List(self, textString):
         lowercase = textString.lower()
+        # include only words with characters a-z or A-Z
         words = re.split(r'\W+', lowercase)
         punct = string.punctuation
         noPunctuation = []
@@ -95,6 +96,8 @@ class NLPTools:
 # https://www.geeksforgeeks.org/tf-idf-model-for-page-ranking/#:~:text=tf%2Didf%20is%20a%20weighting,considered%20to%20be%20more%20important.
 
     def termFrequency(self, term, document):
+        term = term.lower()
+        document=document.lower()
         words = document.split()
         frequency = words.count(term)
         return frequency
@@ -103,7 +106,7 @@ class NLPTools:
         words = document.split()
         return len(words)
 
-    def nomralizedTermFrequency(self, term, document):
+    def normalizedTermFrequency(self, term, document):
         tf = float(self.termFrequency(term, document))
         n = float(self.documentLength(document))
         return tf/n
@@ -111,6 +114,7 @@ class NLPTools:
     # number of documents containing term
     def numberDocumentsWithTerm(self,term, documentList):
         frequency = 0
+        term=term.lower()
         for d in documentList:
             words = d.split()
             if term in words:
@@ -122,5 +126,41 @@ class NLPTools:
         idf = math.log2(numDocuments/docFrequency)
         return idf
 
-    def scoreTFIDF(self, term, documentList):
+    def scoreTFIDF(self, term, document, documentList):
+        normTF = self.normalizedTermFrequency(term, document)
+        docfreq=self.numberDocumentsWithTerm(term, documentList)
+        numdocs=len(documentList)
+        idf = self.inverseDocumentFrequency(docfreq, numdocs)
+        score = normTF * idf
+        return score
+
+# https://cs231n.github.io/python-numpy-tutorial/#:~:text=started%20with%20Numpy.-,Arrays,the%20array%20along%20each%20dimension.
+
+    def makeTFMatrix(self, termList, documentList, saveAsCSV='data/tf.csv'):
+        try:
+            numTerms = len(termList)
+            numDocs=len(documentList)
+            # terms=rows, docs=cols
+            tfMatrix = np.zeros((numTerms,numDocs))
+            for t in range(numTerms):
+                for d in range(numDocs):
+                    term=termList[t]
+                    doc=documentList[d]
+                    tfValue = self.normalizedTermFrequency(term,doc)
+                    print(f"tf: {tfValue}") # debug
+                    tfMatrix[t,d] = tfValue
+
+            np.savetxt(saveAsCSV, tfMatrix)
+        except BaseException as e:
+            print(str(e))
+            return False
+
+        return True
+        
+
+
+    def makeIDFMatrix(self, termList, documentList, saveAsCSV='data/idf.csv'):
+        pass
+
+    def makeTFIDFScoreMatrix(self, tfCSVFile, idfCSVFile):
         pass

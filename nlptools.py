@@ -52,13 +52,14 @@ class NLPTools:
     # """Map POS tag to first character lemmatize() accepts"""
         word, postag = self.getPartOfSpeech(singleWord)
         print(f"Wordnet POS: {word} -> {postag}")
-        wordnet_tag = postag[0] # first character
+        wordnet_tag = str(postag[0]) # first character
         return wordnet_tag.lower()
 
 #https://machinelearningmastery.com/clean-text-machine-learning-python/
 
     def cleanText2List(self, textString):
-        lowercase = textString.lower()
+        text=str(textString)
+        lowercase = text.lower()
         # include only words with characters a-z or A-Z
         words = re.split(r'\W+', lowercase)
         punct = string.punctuation
@@ -83,24 +84,35 @@ class NLPTools:
 
     def makeVocabularyFile(self, dataList, filePath):
         # check all items are strings
+        # ??? UnicodeEncodeError: 'charmap' codec can't encode character '\u014d' in position 2049: character maps to <undefined>
         strList = []
         for d in dataList:
-            if isinstance(d, type(str)):
-                strList.append(d)
+            strList.append(str(d))
         fulltext = ' '.join(strList)
         cleanWordList = self.cleanText2List(fulltext)
         usefulWords = self.removeStopwords(cleanWordList)
         wordSet = set(usefulWords)
         wordSorted=sorted(wordSet)
         numWords = len(wordSorted)
+        textNewLines = '\n'.join(wordSorted)
+        # https://stackoverflow.com/questions/14630288/unicodeencodeerror-charmap-codec-cant-encode-character-maps-to-undefined
+        # does not work: textNewLines.replace('\u014d','') # remove unicode error
+        # http://blog.notdot.net/2010/07/Getting-unicode-right-in-Python
+
         with open(filePath, 'w') as f:
-            for w in wordSorted:
-                f.write(w+"\n") # add new lines
+            for char in textNewLines:
+                try:
+                    f.write(char)
+                except BaseException as e:
+                    print(str(e))
+            
         return numWords
 
 # https://www.geeksforgeeks.org/tf-idf-model-for-page-ranking/#:~:text=tf%2Didf%20is%20a%20weighting,considered%20to%20be%20more%20important.
 
     def termFrequency(self, term, document):
+        document=str(document)
+        term=str(term)
         term = term.lower()
         document=document.lower()
         words = document.split()
@@ -108,6 +120,7 @@ class NLPTools:
         return frequency
 
     def documentLength(self, document):
+        document=str(document)
         words = document.split()
         return len(words)
 
@@ -119,8 +132,11 @@ class NLPTools:
     # number of documents containing term
     def numberDocumentsWithTerm(self,term, documentList):
         frequency = 0
+        term=str(term)
         term=term.lower()
         for d in documentList:
+            # must be string to split
+            d = str(d)
             words = d.split()
             if term in words:
                 frequency+=1

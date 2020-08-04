@@ -1,6 +1,3 @@
-a2data.csv
-a2data.xlsx
-searchterms.txt
-courseTF.csv
-courseIDF.csv
-courseTFIDF.csv
+*.csv
+*.txt
+data/*

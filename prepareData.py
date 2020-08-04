@@ -49,6 +49,27 @@ class RSData:
             self.isLoaded = False
         return self.isLoaded
 
+    def loadCSVData(self, datafile, numrows=None):
+        try:
+            self.rsdata = pd.read_csv(datafile, nrows=numrows)
+            self.isLoaded = True
+        except BaseException as e:
+            print(str(e))
+            self.isLoaded = False
+        return self.isLoaded
+
+    def makeRandomSampleCSV(self, datafile, percentFraction, saveAsCSV):
+        status = self.loadXLSXData(datafile=datafile, numrows=None)
+        if status:
+            try:
+                sampleData = self.rsdata.sample(frac=percentFraction)
+                sampleData.to_csv(saveAsCSV)
+            except BaseException as e:
+                print(str(e))
+                status=False
+        return status
+
+
     def getColumnDataAsList(self, colname):
         dataVector = self.rsdata[colname].tolist()
         return dataVector

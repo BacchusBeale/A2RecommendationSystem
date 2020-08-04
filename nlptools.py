@@ -82,7 +82,12 @@ class NLPTools:
         return mainwords
 
     def makeVocabularyFile(self, dataList, filePath):
-        fulltext = ' '.join(dataList)
+        # check all items are strings
+        strList = []
+        for d in dataList:
+            if isinstance(d, type(str)):
+                strList.append(d)
+        fulltext = ' '.join(strList)
         cleanWordList = self.cleanText2List(fulltext)
         usefulWords = self.removeStopwords(cleanWordList)
         wordSet = set(usefulWords)
@@ -205,3 +210,12 @@ class NLPTools:
             return False
 
         return True
+
+    def readListFile(self, filename):
+        termList = []
+        with open(filename,'r') as f:
+            for t in f.readlines():
+                t = t.strip()
+                if len(t)>0:
+                    termList.append(t)
+        return termList

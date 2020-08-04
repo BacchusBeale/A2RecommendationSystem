@@ -63,7 +63,7 @@ class RSData:
         if status:
             try:
                 sampleData = self.rsdata.sample(frac=percentFraction)
-                sampleData.to_csv(saveAsCSV)
+                sampleData.to_csv(saveAsCSV, index=False) # no row ids
             except BaseException as e:
                 print(str(e))
                 status=False

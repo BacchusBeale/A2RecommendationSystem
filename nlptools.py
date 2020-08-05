@@ -125,6 +125,29 @@ class NLPTools:
             
         return numWords
 
+    def createVocabDocumentIndex(self, docList, vocabList, saveAsCSV):
+        vocabIndexList = []
+        with open(saveAsCSV, 'w', encoding='ascii', errors='ignore') as f:
+            for v in vocabList:
+                v = v.lower()
+                v = str(v)
+                docIndexList = []
+                docIndex=-1
+                for d in docList:
+                    docIndex+=1
+                    d=str(d)
+                    d = d.lower()
+                    i = d.find(v)
+                    if i>=0:
+                        docIndexList.append(str(docIndex))
+
+                vocabItem = f"{v},{','.join(docIndexList)}"
+                vocabIndexList.append(vocabItem)
+                print(vocabItem+"\n")
+                f.write(vocabItem+"\n")
+
+        return vocabIndexList
+
 # https://www.geeksforgeeks.org/tf-idf-model-for-page-ranking/#:~:text=tf%2Didf%20is%20a%20weighting,considered%20to%20be%20more%20important.
 
     def termFrequency(self, term, document):
@@ -240,9 +263,7 @@ class NLPTools:
                         if tfidfScore>0:
                             print(f"({t},{d}):{tfidfScore}")
                             textline = f"{nextTerm},{t},{doc},{d},{tfidfScore}\n"
-                            f.write(textline)
-
-                    
+                            f.write(textline)                   
 
             np.savetxt(saveAsCSV, scoreMatrix)
         except BaseException as e:

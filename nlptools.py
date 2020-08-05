@@ -218,24 +218,31 @@ class NLPTools:
 
         return True
 
-    def makeTFIDFScoreMatrix(self, termList, documentList, saveAsCSV='data/tfidfScores.csv'):
+    def makeTFIDFScoreMatrix(self, termList, documentList, saveNonZero='data/nonzero.csv', saveAsCSV='data/tfidfScores.csv'):
         try:
             numTerms = len(termList)
             numDocs=len(documentList)
             # terms=rows, docs=cols
             scoreMatrix = np.zeros((numTerms,numDocs)) # one value for each term
-            for t in range(numTerms):
-                nextTerm=termList[t]
-                docfreq = self.numberDocumentsWithTerm(nextTerm, documentList)
-                idfScore = self.inverseDocumentFrequency(docfreq, numDocs)
-                
-                for d in range(numDocs):
-                    term=termList[t]
-                    doc=documentList[d]
-                    tfValue = self.normalizedTermFrequency(term,doc)
+
+            with open(saveNonZero, 'w', encoding='ascii', errors='ignore') as f:
+                for t in range(numTerms):
+                    nextTerm=termList[t]
+                    docfreq = self.numberDocumentsWithTerm(nextTerm, documentList)
+                    idfScore = self.inverseDocumentFrequency(docfreq, numDocs)
                     
-                    tfidfScore = tfValue*idfScore
-                    scoreMatrix[t,d]=tfidfScore
+                    for d in range(numDocs):
+                        term=termList[t]
+                        doc=documentList[d]
+                        tfValue = self.normalizedTermFrequency(term,doc)
+                        tfidfScore = tfValue*idfScore
+                        scoreMatrix[t,d]=tfidfScore
+                        if tfidfScore>0:
+                            print(f"({t},{d}):{tfidfScore}")
+                            textline = f"{nextTerm},{t},{doc},{d},{tfidfScore}\n"
+                            f.write(textline)
+
+                    
 
             np.savetxt(saveAsCSV, scoreMatrix)
         except BaseException as e:

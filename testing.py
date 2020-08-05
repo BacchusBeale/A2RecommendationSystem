@@ -28,11 +28,13 @@ def test2():
 
     nlp = nlptools.NLPTools()
     courseTerms = nlp.readListFile(filename='data/courseVocab.txt')
-    status = nlp.makeTFIDFScoreMatrix(termList=courseTerms, documentList=coursenameData, saveAsCSV='data/courseTFIDF.csv')
+    status = nlp.makeTFIDFScoreMatrix(termList=courseTerms, documentList=coursenameData,
+    saveNonZero='data/nonzeroCourse.csv', saveAsCSV='data/courseTFIDF.csv')
     print(f"Course terms: {status}")
 
     titleTerms = nlp.readListFile(filename='data/readingListVocab.txt')
-    status = nlp.makeTFIDFScoreMatrix(termList=titleTerms, documentList=readingListData, saveAsCSV='data/readingListTFIDF.csv')
+    status = nlp.makeTFIDFScoreMatrix(termList=titleTerms, documentList=readingListData,
+    saveNonZero='data/nonzeroTitle.csv', saveAsCSV='data/readingListTFIDF.csv')
     print(f"Title terms: {status}")
 
 def runtests():

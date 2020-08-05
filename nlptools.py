@@ -41,8 +41,8 @@ class NLPTools:
 
         return lemma
 
-    def getPartOfSpeech(self,singleWord):
-        postag = nltk.pos_tag(singleWord) # returns tuple (word,tag)
+    def getPartOfSpeech(self,wordString):
+        postag = nltk.pos_tag(word_tokenize(wordString)) # returns tuple (word,tag)
         return postag
 
     # Note: Adapted to convert POS tags
@@ -57,14 +57,38 @@ class NLPTools:
 
 #https://machinelearningmastery.com/clean-text-machine-learning-python/
 
-    def cleanText2List(self, textString):
-        text=str(textString)
-        lowercase = text.lower()
-        # include only words with characters a-z or A-Z
-        words = re.split(r'\W+', lowercase)
+    def cleanText2List(self, textList):
+        textLower = self.list2Lower(textList)
+        cleanList = self.removePunctuation(textLower)
+        wordList = []
+        for t in cleanList:
+            words = t.split()
+            for w in words:
+                wordList.append(w)
+
+        alphaWords = self.keepOnlyAlphabetWords(wordList)
+        return alphaWords
+
+    def list2Lower(self, textList):
+        # list elements may not be str type eg float or int
+        wordList = [str(t).lower() for t in textList]
+        return wordList
+
+    def keepOnlyAlphabetWords(self, wordList):
+        alphaWords=[]
+        for w in wordList:
+            w = w.strip()
+            if len(w)==0: # no empty strings
+                continue
+            if w.isalpha():
+                alphaWords.append(w)
+
+        return alphaWords
+
+    def removePunctuation(self,wordList):
         punct = string.punctuation
         noPunctuation = []
-        for w in words:
+        for w in wordList:
             w = w.strip() # remove whitespace
             for p in punct:
                 w.replace(p,"") # remove punctuation
@@ -72,39 +96,32 @@ class NLPTools:
             if len(w)>0: # no empty strings
                 noPunctuation.append(w)
         
-        return words
+        return noPunctuation
         
     def removeStopwords(self, wordList):
         stoplist = set(stopwords.words('english'))
-        mainwords = []
+        mainwords = wordList.copy()
         for w in wordList:
-            if w not in stoplist:
-                mainwords.append(w)
+            for s in stoplist:
+                if w==s:
+                    mainwords.remove(w)
         return mainwords
 
     def makeVocabularyFile(self, dataList, filePath):
-        # check all items are strings
         # ??? UnicodeEncodeError: 'charmap' codec can't encode character '\u014d' in position 2049: character maps to <undefined>
-        strList = []
-        for d in dataList:
-            strList.append(str(d))
-        fulltext = ' '.join(strList)
-        cleanWordList = self.cleanText2List(fulltext)
+        cleanWordList = self.cleanText2List(dataList)
         usefulWords = self.removeStopwords(cleanWordList)
         wordSet = set(usefulWords)
         wordSorted=sorted(wordSet)
         numWords = len(wordSorted)
-        textNewLines = '\n'.join(wordSorted)
+        
         # https://stackoverflow.com/questions/14630288/unicodeencodeerror-charmap-codec-cant-encode-character-maps-to-undefined
         # does not work: textNewLines.replace('\u014d','') # remove unicode error
         # http://blog.notdot.net/2010/07/Getting-unicode-right-in-Python
-
-        with open(filePath, 'w') as f:
-            for char in textNewLines:
-                try:
-                    f.write(char)
-                except BaseException as e:
-                    print(str(e))
+        # https://docs.python.org/3/howto/unicode.html
+        with open(filePath, 'w', encoding='ascii',errors='ignore') as f:
+            for w in wordSorted:
+                f.write(w+"\n")
             
         return numWords
 

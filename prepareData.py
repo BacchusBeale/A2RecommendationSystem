@@ -83,7 +83,7 @@ class RSData:
 # main processing function
 # nrows=None means all data
 def preprocessData(xlsfile='data/a2data.xlsx', debug=True, nrows=10):
-    nltk.download('wordnet')
+    #nltk.download('wordnet')
     numRows = None
     if debug:
         numRows=nrows
@@ -96,7 +96,7 @@ def preprocessData(xlsfile='data/a2data.xlsx', debug=True, nrows=10):
     nWords = nlp.makeVocabularyFile(dataList=coursenameData, filePath='data/courseVocab.txt')
     print(f"Num words={nWords}")
 
-    # output data: CourseName
+    # output data: Title
     readingListData = rs.getColumnDataAsList(RSData.TITLE)
     nWords = nlp.makeVocabularyFile(dataList=readingListData, filePath='data/readingListVocab.txt')
     print(f"Num words={nWords}")

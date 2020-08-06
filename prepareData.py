@@ -150,9 +150,25 @@ def prepareWordData(datadir='data',
 
         if not rs.loadCSVData(datafile=datapath,numrows=numrows):
             raise BaseException("Load error")
-
+        
+        vocabFile=f'{datadir}/{dataFilePrefix}Vocab.txt'
         columnData = rs.getColumnDataAsList(colname=dataColumnName)
-        nWords = nlp.makeVocabularyFile(dataList=columnData,filePath='')
+        nWords = nlp.makeVocabularyFile(dataList=columnData,filePath=vocabFile)
+        print(f"{dataColumnName} words= {nWords}")
+
+        dataList = nlp.readListFile(vocabFile)
+        indexFile=f'{datadir}/{dataFilePrefix}VocabIndex.csv'
+        res = nlp.createVocabDocumentIndex(docList=columnData, 
+        vocabList=dataList, saveAsCSV=indexFile)
+        print(f"list size={res}")
+
+        tfidfFile=f'{datadir}/{dataFilePrefix}TFIDF.csv'
+        nzFile=f'{datadir}/{dataFilePrefix}NonZero.csv'
+        status = nlp.makeTFIDFScoreMatrix(termList=vocabFile, 
+        documentList=columnData,
+        saveNonZero=nzFile, 
+        saveAsCSV=tfidfFile)
+        print(f"Course terms: {status}")
 
     except BaseException as e:
         print("Processing error: " + str(e))

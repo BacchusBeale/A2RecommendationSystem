@@ -149,7 +149,7 @@ class NLPTools:
                 print(vocabItem+"\n")
                 f.write(vocabItem+"\n")
 
-        return vocabIndexList
+        return len(vocabIndexList)
 
 # https://www.geeksforgeeks.org/tf-idf-model-for-page-ranking/#:~:text=tf%2Didf%20is%20a%20weighting,considered%20to%20be%20more%20important.
 

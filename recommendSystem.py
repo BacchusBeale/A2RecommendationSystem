@@ -1,5 +1,6 @@
 import nlptools
 import prepareData
+import search
 
 class RSSystem:
     def __init__(self):
@@ -53,18 +54,27 @@ class RSSystem:
         except BaseException as e:
             print("Build error: " + str(e))
 
-    def doUserSearch(self):
+    def doUserSearch(self, contentBased=True):
         userquery = input("Enter search keywords: ")
         results=[]
-        results.append("You searched for: " + userquery)
+        topN = 5
+        if contentBased:
+            results = search.searchContentBased(numResults=topN)
+        else:
+            results = search.searchCollaborationBased(numResults=topN)
+
+        print("You searched for: " + userquery)
+        print(f"Your top {topN} results are:")
+        
         for r in results:
             print(str(r))
 
 def userMenu():
     print('''
     Welcome to Recommendation System for University Reading Resources
-    1. User Queries: Search by keywords
-    2. Build system
+    0. Build system
+    1. Content-based search
+    2. Collaboration-based search
     3. Quit
     ''')
     choice = input("Enter menu option: ")
@@ -76,14 +86,15 @@ def main():
     system = RSSystem()
     while keepRunning:
         res = userMenu()
-        if res=='1':
-            system.doUserSearch()
-        elif res=='2':    
+        if res=='0':
             system.buildSystem()
+        elif res=='1':
+            system.doUserSearch(contentBased=True)
+        elif res=='2':    
+            system.doUserSearch(contentBased=False)
         elif res=='3':
             print("Have a nice day!")
             keepRunning=False
 
 if __name__ == "__main__":
-    # execute only if run as a script
     main()

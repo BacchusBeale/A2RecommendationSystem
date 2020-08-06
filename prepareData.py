@@ -164,11 +164,11 @@ def prepareWordData(datadir='data',
 
         tfidfFile=f'{datadir}/{dataFilePrefix}TFIDF.csv'
         nzFile=f'{datadir}/{dataFilePrefix}NonZero.csv'
-        status = nlp.makeTFIDFScoreMatrix(termList=vocabFile, 
+        status = nlp.makeTFIDFScoreMatrix(termList=dataList, 
         documentList=columnData,
         saveNonZero=nzFile, 
         saveAsCSV=tfidfFile)
-        print(f"Course terms: {status}")
+        print(f"Processed terms: {status}")
 
     except BaseException as e:
         print("Processing error: " + str(e))

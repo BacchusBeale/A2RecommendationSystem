@@ -80,29 +80,86 @@ class RSData:
     def dataSummary(self):
         return self.rsdata.info()
 
-# main processing function
+
+import os
+# main processing functions
 # nrows=None means all data
-def preprocessData(xlsfile='data/a2data.xlsx', debug=True, nrows=10):
-    #nltk.download('wordnet')
-    numRows = None
-    if debug:
-        numRows=nrows
+def preprocessData(datadir='data',
+    xlsfile='a2data.xlsx',
+    courseDataFile='courseVocab.txt',
+    readingDataFile='readingListVocab.txt',
+    nrows=10):
 
-    nlp = nlptools.NLPTools()
-    rs = RSData()
-    rs.loadXLSXData(datafile=xlsfile, numrows=numRows)
-    # input data: CourseName
-    coursenameData = rs.getColumnDataAsList(RSData.COURSENAME)
-    nWords = nlp.makeVocabularyFile(dataList=coursenameData, filePath='data/courseVocab.txt')
-    print(f"Num words={nWords}")
+    try:
+        if not os.path.exists(datadir):
+            os.mkdir(datadir)
+        
+        nlp = nlptools.NLPTools()
+        rs = RSData()
+        rs.loadXLSXData(datafile=f'{datadir}/{xlsfile}', numrows=nrows)
+        # input data: CourseName
+        coursenameData = rs.getColumnDataAsList(RSData.COURSENAME)
+        nWords = nlp.makeVocabularyFile(dataList=coursenameData, 
+        filePath=f'{datadir}/{courseDataFile}')
+        print(f"Num words={nWords}")
 
-    # output data: Title
-    readingListData = rs.getColumnDataAsList(RSData.TITLE)
-    nWords = nlp.makeVocabularyFile(dataList=readingListData, filePath='data/readingListVocab.txt')
-    print(f"Num words={nWords}")
+        # output data: Title
+        readingListData = rs.getColumnDataAsList(RSData.TITLE)
+        nWords = nlp.makeVocabularyFile(dataList=readingListData, 
+        filePath=f'{datadir}/{readingDataFile}')
+        print(f"Num words={nWords}")
 
-if __name__ == "__main__":
-    preprocessData(xlsfile='data/a2data.xlsx', debug=True)
+    except BaseException as e:
+        print("Processing error: " + str(e))
+        return False
+
+    return True
+    
+def processRandomSample(datadir='data',
+    xlsfile='a2data.xlsx',
+    sampleDataFile='sampleData.csv',
+    percentFraction=0.01):
+    try:
+        if not os.path.exists(datadir):
+            os.mkdir(datadir)
+
+        datapath=f'{datadir}/{xlsfile}'
+        rs = RSData()
+        sampleDataPath = f'{datadir}/{sampleDataFile}'
+        
+        res = rs.makeRandomSampleCSV(datafile=datapath,
+        percentFraction=percentFraction,
+        saveAsCSV=sampleDataPath)
+
+        print(f"Made sample data = {res}")
+    except BaseException as e:
+        print("Processing error: " + str(e))
+        return False
+
+    return True
+
+def prepareWordData(datadir='data',
+    csvfile='sample.csv',
+    dataColumnName='COURSENAME',
+    dataFilePrefix='course',
+    numrows=None):
+    try:
+        rs = RSData()
+        nlp = nlptools.NLPTools()
+        datapath = f'{datadir}/{csvfile}'
+
+        if not rs.loadCSVData(datafile=datapath,numrows=numrows):
+            raise BaseException("Load error")
+
+        columnData = rs.getColumnDataAsList(colname=dataColumnName)
+        nWords = nlp.makeVocabularyFile(dataList=columnData,filePath='')
+
+    except BaseException as e:
+        print("Processing error: " + str(e))
+        return False
+
+    return True
+
 
 """ 
 https://www.geeksforgeeks.org/tf-idf-model-for-page-ranking/#:~:text=tf%2Didf%20is%20a%20weighting,considered%20to%20be%20more%20important.

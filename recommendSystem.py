@@ -1,5 +1,4 @@
-# http://www.nltk.org/ 
-import dataModels
+import nlptools
 import prepareData
 
 def buildSystem():

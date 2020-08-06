@@ -16,6 +16,9 @@ import math
 
 # NLP methods
 class NLPTools:
+    def __init__(self):
+        nltk.download('wordnet')
+        
     def toLowerCase(self,text):
         return str(text).lower()
 

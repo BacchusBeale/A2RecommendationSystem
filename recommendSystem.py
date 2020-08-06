@@ -8,7 +8,7 @@ class RSSystem:
         self.datadir = 'data'
         self.datafile = 'a2data.xlsx'
         self.sampleData = 'sampleData.csv'
-
+        self.samplePercentage = 0.01
         self.course = "course"
         self.courseColumn = self.rsdata.COURSENAME
         self.courseVocab = "courseVocab.txt"
@@ -25,24 +25,47 @@ class RSSystem:
         self.readingTFIDF = "readingTFIDF.csv"
     
     def buildSystem(self):
+        print("Building system, please wait...may take a few minutes")
         try:
+            print("Making random sample")
             self.rsdata.makeRandomSampleCSV(datafile=f"{self.datadir}/{self.datafile}",
-            percentFraction=0.01,
+            percentFraction=self.samplePercentage,
             saveAsCSV=f"{self.datadir}/{self.sampleData}")
 
+            print("Processing course data...")
+            res1 = prepareData.prepareWordData(datadir=self.datadir,
+                csvfile=self.sampleData,
+                dataColumnName=self.courseColumn,
+                dataFilePrefix=self.course,
+                numrows=None)
+
+            print(f"Process status={res1}")
+
+            print("Processing reading data...")
+            res2 = prepareData.prepareWordData(datadir=self.datadir,
+                csvfile=self.sampleData,
+                dataColumnName=self.readingColumn,
+                dataFilePrefix=self.reading,
+                numrows=None)
+
+            print(f"Process status={res2}")
+            
         except BaseException as e:
             print("Build error: " + str(e))
 
     def doUserSearch(self):
         userquery = input("Enter search keywords: ")
-        return "You searched for: " + userquery
+        results=[]
+        results.append("You searched for: " + userquery)
+        for r in results:
+            print(str(r))
 
 def userMenu():
     print('''
     Welcome to Recommendation System for University Reading Resources
     1. User Queries: Search by keywords
     2. Build system
-    any other input. Quit
+    3. Quit
     ''')
     choice = input("Enter menu option: ")
     return choice
@@ -55,9 +78,10 @@ def main():
         res = userMenu()
         if res=='1':
             system.doUserSearch()
-        if res=='2':    
+        elif res=='2':    
             system.buildSystem()
-        else:
+        elif res=='3':
+            print("Have a nice day!")
             keepRunning=False
 
 if __name__ == "__main__":

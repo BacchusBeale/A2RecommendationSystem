@@ -2,7 +2,6 @@ import nlptools
 import prepareData
 from search import SearchEngine
 
-
 class RSSystem:
     def __init__(self):
         self.rsdata = prepareData.RSData()
@@ -21,10 +20,10 @@ class RSSystem:
         self.reading = 'title'
         self.readingColumn = self.rsdata.TITLE
         self.sampleData = 'sampleData.csv'
-        self.readingVocab = "readingVocab.txt"
-        self.readingVocabIndex = "readingVocabIndex.csv"
-        self.readingLookup = "readingNonZero.csv"
-        self.readingTFIDF = "readingTFIDF.csv"
+        self.readingVocab = "titleVocab.txt"
+        self.readingVocabIndex = "titleVocabIndex.csv"
+        self.readingLookup = "titleNonZero.csv"
+        self.readingTFIDF = "titleTFIDF.csv"
 
         self.engine = SearchEngine(datadir=self.datadir,
         datacsv=self.sampleData,

@@ -70,6 +70,7 @@ class NLPTools:
                 wordList.append(w)
 
         alphaWords = self.keepOnlyAlphabetWords(wordList)
+        
         return alphaWords
 
     def list2Lower(self, textList):

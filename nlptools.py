@@ -50,7 +50,8 @@ class NLPTools:
 
     # Note: Adapted to convert POS tags
     # https://www.machinelearningplus.com/nlp/lemmatization-examples-python/
-# https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html
+    # https://nlp.stanford.edu/IR-book/html/htmledition/stemming-and-lemmatization-1.html
+
     def get_wordnet_pos(self,singleWord):
     # """Map POS tag to first character lemmatize() accepts"""
         word, postag = self.getPartOfSpeech(singleWord)
@@ -112,22 +113,23 @@ class NLPTools:
         return mainwords
 
     def makeVocabularyFile(self, dataList, filePath):
-        # ??? UnicodeEncodeError: 'charmap' codec can't encode character '\u014d' in position 2049: character maps to <undefined>
         cleanWordList = self.cleanText2List(dataList)
         usefulWords = self.removeStopwords(cleanWordList)
         wordSet = set(usefulWords)
         wordSorted=sorted(wordSet)
         numWords = len(wordSorted)
         
-        # https://stackoverflow.com/questions/14630288/unicodeencodeerror-charmap-codec-cant-encode-character-maps-to-undefined
-        # does not work: textNewLines.replace('\u014d','') # remove unicode error
-        # http://blog.notdot.net/2010/07/Getting-unicode-right-in-Python
-        # https://docs.python.org/3/howto/unicode.html
         with open(filePath, 'w', encoding='ascii',errors='ignore') as f:
             for w in wordSorted:
                 f.write(w+"\n")
             
         return numWords
+
+    # ??? UnicodeEncodeError: 'charmap' codec can't encode character '\u014d' in position 2049: character maps to <undefined>
+    # https://stackoverflow.com/questions/14630288/unicodeencodeerror-charmap-codec-cant-encode-character-maps-to-undefined
+    # does not work: textNewLines.replace('\u014d','') # remove unicode error
+    # http://blog.notdot.net/2010/07/Getting-unicode-right-in-Python
+    # https://docs.python.org/3/howto/unicode.html
 
     def createVocabDocumentIndex(self, docList, vocabList, saveAsCSV):
         vocabIndexList = []

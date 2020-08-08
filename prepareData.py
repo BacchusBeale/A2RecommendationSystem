@@ -39,6 +39,15 @@ class RSData:
     def __init__(self):
         self.rsdata = pd.DataFrame()
         self.isLoaded = False
+#https://datatofish.com/select-rows-pandas-dataframe/
+
+    def getDataItemAsString(self, rowIndex=0, columnName=COURSENAME):
+        item=""
+        try:
+            item = self.rsdata[columnName].iloc[rowIndex]
+        except BaseException as e:
+            print(str(e))
+        return item
 
     def loadXLSXData(self, datafile, numrows=None):
         try:

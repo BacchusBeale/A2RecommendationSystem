@@ -1,6 +1,6 @@
 import nlptools
 import prepareData
-import search
+from search import SearchEngine
 
 class RSSystem:
     def __init__(self):
@@ -24,6 +24,16 @@ class RSSystem:
         self.readingVocabIndex = "readingVocabIndex.csv"
         self.readingLookup = "readingNonZero.csv"
         self.readingTFIDF = "readingTFIDF.csv"
+
+        self.engine = SearchEngine(datadir=self.datadir,
+        datacsv=self.sampleData,
+        courseVocab=self.courseVocab,
+        titleVocab=self.readingVocab,
+        courseVocabIndex=self.courseVocabIndex,
+        titleVocabIndex=self.readingVocabIndex,
+        courseNonzero=self.courseLookup,
+        titleNonzero=self.readingLookup)
+        self.searchEngineLoaded=False
     
     def buildSystem(self):
         print("Building system, please wait...may take a few minutes")
@@ -54,14 +64,32 @@ class RSSystem:
         except BaseException as e:
             print("Build error: " + str(e))
 
+    def initSearchEngine(self):
+        try:
+            self.searchEngineLoaded=self.engine.loadData()
+        except BaseException as e:
+            print(str(e))
+            self.searchEngineLoaded= False
+        return self.searchEngineLoaded
+
     def doUserSearch(self, contentBased=True):
+        #load data on first use
+        if not self.searchEngineLoaded:
+            print("Preparing search engine...")
+            ok = self.initSearchEngine()
+            if not ok:
+                raise BaseException("Search engine failed to load")
+            else:
+                print("Search engine ready!")
+
         userquery = input("Enter search keywords: ")
         results=[]
         topN = 5
+
         if contentBased:
-            results = search.searchContentBased(numResults=topN)
+            results = self.engine.searchContentBased(userQuery=userquery,numResults=topN)
         else:
-            results = search.searchCollaborationBased(numResults=topN)
+            results = self.engine.searchCollaborationBased(userQuery=userquery,numResults=topN)
 
         print("You searched for: " + userquery)
         print(f"Your top {topN} results are:")

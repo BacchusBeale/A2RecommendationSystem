@@ -1,15 +1,15 @@
 from prepareData import RSData
 
-class Search:
-    def __init__(self, datacsv, courseVocab, titleVocab,
+class SearchEngine:
+    def __init__(self, datadir, datacsv, courseVocab, titleVocab,
         courseVocabIndex,titleVocabIndex,courseNonzero,titleNonzero):
-        self.datafile=datacsv
-        self.courseVocab=courseVocab
-        self.courseVocabIndex=courseVocabIndex
-        self.courseNonzero=courseNonzero
-        self.titleVocab=titleVocab
-        self.titleVocabIndex=titleVocabIndex
-        self.titleNonzero=titleNonzero
+        self.datafile=datadir+"/"+datacsv
+        self.courseVocab=datadir+"/"+courseVocab
+        self.courseVocabIndex=datadir+"/"+courseVocabIndex
+        self.courseNonzero=datadir+"/"+courseNonzero
+        self.titleVocab=datadir+"/"+titleVocab
+        self.titleVocabIndex=datadir+"/"+titleVocabIndex
+        self.titleNonzero=datadir+"/"+titleNonzero
 
         self.data = RSData()
         self.isLoaded=False

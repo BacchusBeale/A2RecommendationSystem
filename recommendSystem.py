@@ -2,6 +2,7 @@ import nlptools
 import prepareData
 from search import SearchEngine
 
+
 class RSSystem:
     def __init__(self):
         self.rsdata = prepareData.RSData()
@@ -93,9 +94,11 @@ class RSSystem:
 
         print("You searched for: " + userquery)
         print(f"Your top {topN} results are:")
-        
-        for r in results:
-            print(str(r))
+        if len(results) > 0:
+            for r in results:
+                print(str(r))
+        else:
+            print("No results found")
 
 def userMenu():
     print('''

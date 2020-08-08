@@ -47,7 +47,7 @@ class RSData:
             item = self.rsdata[columnName].iloc[rowIndex]
         except BaseException as e:
             print(str(e))
-        return item
+        return str(item)
 
     def loadXLSXData(self, datafile, numrows=None):
         try:

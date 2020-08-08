@@ -80,8 +80,8 @@ class SearchEngine:
                             docmatches = self.titleNonzeroData.loc[self.titleNonzeroData["term"]==dw]
                             #print("Matches: ", docmatches)
                             for index, row in docmatches.iterrows():
-                                docNumber = row[3]                      
-                                docScore= row[4]
+                                docNumber = row[-2]                      
+                                docScore= row[-1]
                                 docScoreDict[str(docNumber)]=docScore
 # https://careerkarma.com/blog/python-sort-a-dictionary-by-value/#:~:text=To%20sort%20a%20dictionary%20by%20value%20in%20Python%20you%20can,Dictionaries%20are%20unordered%20data%20structures.
 
@@ -94,12 +94,17 @@ class SearchEngine:
                 # max results
                 if itemCount>numResults:
                     break
-                di = item[0]
-                di=int(di)
-                sc = item[1]
-                sc=float(sc)
+                try:
+                    di = item[0]
+                    di=int(di)
+                    sc = item[1]
+                    sc=float(sc)
+                except BaseException:
+                    continue
+                
                 res = self.resultFormat(dataIndex=di,score=sc)
                 results.append(res)
+                
             
         except BaseException as e:
             print("Search error: ",str(e))
@@ -138,10 +143,9 @@ class SearchEngine:
                             docmatches = self.courseNonzeroData.loc[self.courseNonzeroData["term"]==dw]
                             #print("Matches: ", docmatches)
                             for index, row in docmatches.iterrows():
-                                docNumber = row[3]                      
-                                docScore= row[4]
+                                docNumber = row[-2]                      
+                                docScore= row[-1]
                                 docScoreDict[str(docNumber)]=docScore
-
 # https://careerkarma.com/blog/python-sort-a-dictionary-by-value/#:~:text=To%20sort%20a%20dictionary%20by%20value%20in%20Python%20you%20can,Dictionaries%20are%20unordered%20data%20structures.
 
             sortedList = sorted(docScoreDict.items(), key=lambda x: x[1], reverse=True)
@@ -153,12 +157,17 @@ class SearchEngine:
                 # max results
                 if itemCount>numResults:
                     break
-                di = item[0]
-                di=int(di)
-                sc = item[1]
-                sc=float(sc)
+                try:
+                    di = item[0]
+                    di=int(di)
+                    sc = item[1]
+                    sc=float(sc)
+                except BaseException:
+                    continue
+                
                 res = self.resultFormat(dataIndex=di,score=sc)
                 results.append(res)
+                
             
         except BaseException as e:
             print("Search error: ",str(e))

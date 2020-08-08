@@ -9,7 +9,7 @@ class RSSystem:
         self.datadir = 'data'
         self.datafile = 'a2data.xlsx'
         self.sampleData = 'sampleData.csv'
-        self.samplePercentage = 0.01
+        self.samplePercentage = 0.1
         self.course = "course"
         self.courseColumn = self.rsdata.COURSENAME
         self.courseVocab = "courseVocab.txt"

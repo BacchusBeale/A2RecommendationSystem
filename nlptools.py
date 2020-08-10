@@ -125,7 +125,9 @@ class NLPTools:
             
         return numWords
 
-    # ??? UnicodeEncodeError: 'charmap' codec can't encode character '\u014d' in position 2049: character maps to <undefined>
+    # ??? UnicodeEncodeError: 'charmap' codec can't encode character '\u014d' in position 2049: 
+    # character maps to <undefined>
+    
     # https://stackoverflow.com/questions/14630288/unicodeencodeerror-charmap-codec-cant-encode-character-maps-to-undefined
     # does not work: textNewLines.replace('\u014d','') # remove unicode error
     # http://blog.notdot.net/2010/07/Getting-unicode-right-in-Python
